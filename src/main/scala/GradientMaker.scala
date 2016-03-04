@@ -3,7 +3,7 @@ case class GradientMaker(steps:Int, color1:RGB, color2:RGB) {
   private val amountPerStep:Double = 1.0 / steps.toDouble
 
   val finalGradient:List[RGB] = {
-    List.tabulate(steps)( step => {
+    List.tabulate(steps+1)( step => {
       val c2Pct = step * amountPerStep
       val c1Pct = 1.0 - c2Pct
       RGB(
@@ -14,5 +14,5 @@ case class GradientMaker(steps:Int, color1:RGB, color2:RGB) {
     })
   }
 
-  def getStep(step:Int):RGB = { finalGradient( if (step>=steps) steps-1 else step ) }
+  def getStep(step:Int):RGB = finalGradient(step)
 }

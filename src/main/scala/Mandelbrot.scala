@@ -24,7 +24,8 @@ object Mandelbrot {
     for(row <- 0 until pixelHeight) {
       print('.')
       val imgLoc  = top + (row * hpixelDelta)
-      for(col <- 0 until pixelWidth) {
+
+      (0 until pixelWidth).foreach( col => {
 
         val realLoc = left + (col * wpixelDelta)
 
@@ -40,7 +41,8 @@ object Mandelbrot {
         val color = grad.getStep(iterations)
 
         ppm.writePixel(color)
-      }
+      })
+
     }
 
     ppm.done()

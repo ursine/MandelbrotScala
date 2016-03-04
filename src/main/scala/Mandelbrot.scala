@@ -23,16 +23,16 @@ object Mandelbrot {
     var col = 0
     for(row <- 0 until pixelHeight) {
       print('.')
+      val imgLoc  = top + (row * hpixelDelta)
       for(col <- 0 until pixelWidth) {
 
         val realLoc = left + (col * wpixelDelta)
-        val imgLoc  = top + (row * hpixelDelta)
 
         val valueC = Complex(realLoc, imgLoc)
         var valueZ = Complex(0,0)
         var iterations = 0
 
-        while (valueZ.modulus < 2 && iterations < topOut-1) {
+        while (valueZ.modulus < 2 && iterations < topOut) {
           valueZ = valueZ * valueZ + valueC
           iterations+=1
         }

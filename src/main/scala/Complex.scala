@@ -2,8 +2,8 @@ import scala.math.sqrt
 
 class Complex(val re:Double, val im:Double) {
 
-  def +(c: Complex):Complex = new Complex(re + c.re, im + c.im)
-  def *(c: Complex):Complex = new Complex(re * c.re - im * c.im, im * c.re + re * c.im)
+  def +(c: Complex):Complex = Complex(re + c.re, im + c.im)
+  def *(c: Complex):Complex = Complex(re * c.re - im * c.im, im * c.re + re * c.im)
 
   def modulus = sqrt(re*re + im*im)
 

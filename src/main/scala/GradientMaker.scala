@@ -14,5 +14,5 @@ case class GradientMaker(steps:Int, color1:RGB, color2:RGB) {
     })
   }
 
-  def getStep(step:Int):RGB = finalGradient(step)
+  def getStep(step:Int):RGB = { finalGradient( if (step>=steps) steps-1 else step ) }
 }

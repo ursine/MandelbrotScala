@@ -1,3 +1,5 @@
+package Mandelbrot
+
 import java.io._
 
 /*
@@ -39,5 +41,5 @@ class PPMWriter(fname:String, imgWidth: Int, imgHeight: Int) {
 
   def remainingPixels = pixels
 
-  override def toString = s"PPMWriter - W:$imgWidth, H:$imgHeight, Remaining: $pixels / $totalPixels"
+  override def toString = s"Mandelbrot.PPMWriter - W:$imgWidth, H:$imgHeight, Remaining: $pixels / $totalPixels"
 }

@@ -1,3 +1,5 @@
+package Mandelbrot
+
 case class GradientMaker(steps:Int, color1:RGB, color2:RGB) {
 
   private val amountPerStep:Double = 1.0 / steps.toDouble

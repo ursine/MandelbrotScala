@@ -1,3 +1,5 @@
+package Mandelbrot
+
 import scala.math.sqrt
 
 class Complex(val re:Double, val im:Double) {
@@ -12,5 +14,8 @@ class Complex(val re:Double, val im:Double) {
 }
 
 object Complex {
+
+  def zero = Complex(0,0)
+
   def apply(re:Double, im:Double):Complex = new Complex(re,im)
 }

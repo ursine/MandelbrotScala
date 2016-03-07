@@ -1,3 +1,8 @@
+package Mandelbrot
+
+/**
+  * Created by garycoulbourne on 3/7/16.
+  */
 object Mandelbrot {
 
   private val left:Double   = -2
@@ -17,6 +22,7 @@ object Mandelbrot {
   def main(args: Array[String]) {
 
     val grad = new GradientMaker(topOut, RGB(255,0,0), RGB(0,0,255))
+
     val ppm = new PPMWriter("output.ppm", pixelWidth, pixelHeight)
 
     var row = 0
@@ -30,13 +36,13 @@ object Mandelbrot {
         val realLoc = left + (col * wpixelDelta)
 
         val valueC = Complex(realLoc, imgLoc)
-        var valueZ = Complex(0,0)
-        var iterations = 0
+        var valueZ = Complex.zero
+        var iterations:Int = 0
 
-        while (valueZ.modulus < 2 && iterations < topOut) {
+        do {
           valueZ = valueZ * valueZ + valueC
           iterations+=1
-        }
+        } while (valueZ.modulus < 2 && iterations < topOut)
 
         val color = grad.getStep(iterations)
 

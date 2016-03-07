@@ -6,8 +6,8 @@ case class GradientMaker(steps:Int, color1:RGB, color2:RGB) {
 
   val finalGradient:List[RGB] = {
     List.tabulate(steps+1)( step => {
-      val c2Pct = step * amountPerStep
-      val c1Pct = 1.0 - c2Pct
+      lazy val c2Pct = step * amountPerStep
+      lazy val c1Pct = 1.0 - c2Pct
       RGB(
         (c1Pct * color1.red   + c2Pct * color2.red).toInt,
         (c1Pct * color1.green + c2Pct * color2.green).toInt,
@@ -17,4 +17,6 @@ case class GradientMaker(steps:Int, color1:RGB, color2:RGB) {
   }
 
   def getStep(step:Int):RGB = finalGradient(step)
+
+  def mapIterations(iters:List[Int]):List[RGB] = iters.map( getStep )
 }

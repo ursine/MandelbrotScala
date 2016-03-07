@@ -7,7 +7,7 @@ class Complex(val re:Double, val im:Double) {
   def +(c: Complex):Complex = Complex(re + c.re, im + c.im)
   def *(c: Complex):Complex = Complex(re * c.re - im * c.im, im * c.re + re * c.im)
 
-  def modulus = sqrt(re*re + im*im)
+  def magnitude = sqrt(re*re + im*im)
 
   override def toString =
     "%s%s*i".format(re, if (im < 0) "-" + -im else "+" + im)

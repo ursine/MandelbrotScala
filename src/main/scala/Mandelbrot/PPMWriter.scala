@@ -33,9 +33,11 @@ class PPMWriter(fname:String, imgWidth: Int, imgHeight: Int) {
     pixels-=1
   }
 
-  def writePixel(color:RGB):Unit = {
+  def writePixel(color:RGB): Unit = {
     writePixel(color.red,color.green,color.blue)
   }
+
+  def writePixel(colors:List[RGB]): Unit = colors.foreach(writePixel)
 
   def done(): Unit = pw.close()
 

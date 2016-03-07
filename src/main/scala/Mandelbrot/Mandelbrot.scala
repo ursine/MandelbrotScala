@@ -1,8 +1,7 @@
 package Mandelbrot
 
-/**
-  * Created by garycoulbourne on 3/7/16.
-  */
+
+
 object Mandelbrot {
 
   private val left:Double   = -2
@@ -19,11 +18,24 @@ object Mandelbrot {
 
   private val topOut = 10000
 
+  def compute(location:Complex):Int = {
+    compute(location, Complex.zero, 0, topOut)
+  }
+
+  def compute(cloc:Complex, zloc:Complex, iteration:Int, topOut:Int):Int = {
+    if (zloc.modulus>2 || iteration >= topOut) {
+      iteration
+    } else {
+      compute(cloc, zloc*zloc+cloc, iteration+1, topOut)
+    }
+  }
+
+
   def main(args: Array[String]) {
 
-    val grad = new GradientMaker(topOut, RGB(255,0,0), RGB(0,0,255))
+    lazy val grad = new GradientMaker(topOut, RGB(255,0,0), RGB(0,0,255))
 
-    val ppm = new PPMWriter("output.ppm", pixelWidth, pixelHeight)
+    lazy val ppm = new PPMWriter("output.ppm", pixelWidth, pixelHeight)
 
     var row = 0
     var col = 0
@@ -35,14 +47,7 @@ object Mandelbrot {
 
         val realLoc = left + (col * wpixelDelta)
 
-        val valueC = Complex(realLoc, imgLoc)
-        var valueZ = Complex.zero
-        var iterations:Int = 0
-
-        do {
-          valueZ = valueZ * valueZ + valueC
-          iterations+=1
-        } while (valueZ.modulus < 2 && iterations < topOut)
+        val iterations = compute(Complex(realLoc, imgLoc))
 
         val color = grad.getStep(iterations)
 

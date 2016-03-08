@@ -9,22 +9,30 @@ import scala.swing.event._
 
 object Mandelbrot extends SimpleSwingApplication {
 
-  private val leftMand:Double   = -2
-  private val topMand:Double    = -1
-  private val rightMand:Double  = 2
-  private val bottomMand:Double = 1
+  private var leftMand:Double   = -2
+  private var topMand:Double    = -1
+  private var rightMand:Double  = 2
+  private var bottomMand:Double = 1
 
   private val pixelWidth    = 800
   private val pixelHeight   = 400
 
-  private var width:Double  = Math.abs(leftMand - rightMand)
-  private var height:Double = Math.abs(topMand - bottomMand)
-  private var wpixelDelta:Double = width/pixelWidth
-  private var hpixelDelta:Double = height/pixelHeight
+  private var width:Double  = 0
+  private var height:Double = 0
+  private var wpixelDelta:Double = 0
+  private var hpixelDelta:Double = 0
 
-  private val topOut = 10000
+  def updateMetadata() = {
+    width = Math.abs(leftMand - rightMand)
+    height = Math.abs(topMand - bottomMand)
+    wpixelDelta = width / pixelWidth
+    hpixelDelta = height / pixelHeight
+  }
+  updateMetadata()
 
-  private val img:BufferedImage = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_3BYTE_BGR)
+  private val topOut = 1000
+
+  private var img:BufferedImage = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_3BYTE_BGR)
 
   val grad = new GradientMaker(topOut, RGB(255,0,0), RGB(0,0,255))
 
@@ -46,42 +54,58 @@ object Mandelbrot extends SimpleSwingApplication {
         yclick = e.point.getY
         println(s"Mouse Pressed $xclick, $yclick")
       }
-      case e: MouseDragged => println("Mouse Dragged")
-      case e: MouseReleased => println("Mouse Released")
 
-      /* case e: MousePressed =>
-        moveTo(e.point)
-        requestFocusInWindow()
-      case e: MouseDragged => lineTo(e.point)
-      case e: MouseReleased => lineTo(e.point)
-      case KeyTyped(_, 'c', _, _) =>
-        path = new geom.GeneralPath
-        repaint()*/
+      case e: MouseReleased => {
+        val xend = e.point.getX
+        val yend = e.point.getY
+
+        val lMand = leftMand + (xclick * hpixelDelta)
+        val rMand = leftMand + (xend * hpixelDelta)
+        val tMand = topMand + (yclick * wpixelDelta)
+        val bMand = topMand + (yend * wpixelDelta)
+
+        println(s"Mouse Released $xend, $yend")
+        println(s"New Location: ($lMand,$tMand) - ($rMand,$bMand) vs ($leftMand,$topMand) - ($rightMand,$bottomMand)")
+
+        leftMand = lMand
+        rightMand = rMand
+        topMand = tMand
+        bottomMand = bMand
+
+        img = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_3BYTE_BGR)
+
+        updateMetadata()
+        drawThread = makeDrawer()
+      }
 
       case _: FocusLost => repaint()
     }
 
-    var drawThread = new Thread(new Runnable {
-      def run = {
-        (0 until pixelHeight).foreach(row => {
-          val imgLoc = topMand + (row * hpixelDelta)
-          val data: List[RGB] = grad.mapIterations(
-            (0 until pixelWidth).map(col => {
-              val realLoc = leftMand + (col * wpixelDelta)
-              compute(Complex(realLoc, imgLoc))
-            }).toList)
+    def makeDrawer() = {
+      val t = new Thread(new Runnable {
+        def run = {
+          (0 until pixelHeight).foreach(row => {
+            val imgLoc = topMand + (row * hpixelDelta)
+            val data: List[RGB] = grad.mapIterations(
+              (0 until pixelWidth).par.map(col => {
+                val realLoc = leftMand + (col * wpixelDelta)
+                compute(Complex(realLoc, imgLoc))
+              }).toList)
 
-          data.zipWithIndex.foreach( index => {
-            val (clr, xpix) = index
-            img.setRGB(xpix,row,new Color(clr.red,clr.green,clr.blue).getRGB)
+            data.zipWithIndex.foreach(index => {
+              val (clr, xpix) = index
+              img.setRGB(xpix, row, new Color(clr.red, clr.green, clr.blue).getRGB)
+            })
+            repaint
+            revalidate
+            print('.')
           })
-          repaint
-          revalidate
-        })
-      }
-    })
-
-    drawThread.start()
+        }
+      })
+      t.start()
+      t
+    }
+    var drawThread = makeDrawer()
 
     override def paintComponent(g: Graphics2D) = {
       super.paintComponent(g)
